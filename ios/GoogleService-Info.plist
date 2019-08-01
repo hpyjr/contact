@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>353328083696-76qk2m6dfl137gc96ka7ndbnuhms8b6p.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.353328083696-76qk2m6dfl137gc96ka7ndbnuhms8b6p</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBuE2-6jSU864XIym7I0fh4-9v62ngBTsg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>353328083696</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.dexbytes.contact</string>
+	<key>PROJECT_ID</key>
+	<string>contacts-21d64</string>
+	<key>STORAGE_BUCKET</key>
+	<string>contacts-21d64.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:353328083696:ios:1807146ac0ba12bf</string>
+	<key>DATABASE_URL</key>
+	<string>https://contacts-21d64.firebaseio.com</string>
+</dict>
+</plist>

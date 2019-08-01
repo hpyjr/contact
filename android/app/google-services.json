@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "944380073995",
+    "firebase_url": "https://contactapp-eee6f.firebaseio.com",
+    "project_id": "contactapp-eee6f",
+    "storage_bucket": "contactapp-eee6f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:944380073995:android:a8daa2dfef4d685e",
+        "android_client_info": {
+          "package_name": "com.contactapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "944380073995-607gp626u71099mcsli855jk92f2ofoo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCKGFGqzHbi9b1MRKPO7hvxqcwkEpUbjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "944380073995-607gp626u71099mcsli855jk92f2ofoo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
