@@ -21,6 +21,7 @@ class MutualContactScreen extends Component {
     render() {
         const { params } = this.props.navigation.state
 
+        console.log('')
         return (
             <SafeAreaView style={styles.container}>
                 <View style={{width: '100%', height: 50, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', borderColor: 'lightgray', borderBottomWidth: 1}}>
@@ -33,9 +34,13 @@ class MutualContactScreen extends Component {
                 </View>
                 <View style={{width: '100%', flex: 1}}>
                     <ScrollView style={{width: '100%', flex: 1}}>
-                        <View style={{paddingTop: 20, paddingBottom: 10, alignItems: 'center'}}>
-                            <Text style={{fontSize: 16, color: 'gray'}}>Also connected with {params.name}</Text>
-                        </View>
+                        {/* <View style={{paddingTop: 20, paddingBottom: 10, alignItems: 'center'}}>
+
+                        <TouchableOpacity onPress={ () => this.props.navigation.navigate('message')} >
+                            <Text style={{paddingHorizontal: 10, paddingVertical: 5, borderColor: 'gray', borderWidth: 1}}>Start Group Chat</Text>
+                        </TouchableOpacity>
+                            { <Text style={{fontSize: 16, color: 'gray'}}>Also connected with {params.name}</Text>}
+                        </View> */}
                         {
                             params.mutual.map((contact, index) => (
                                 <TouchableOpacity onPress={ () => this.props.navigation.navigate('message', {phonenumber: contact})} >

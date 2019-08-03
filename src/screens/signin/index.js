@@ -23,6 +23,7 @@ class SigninScreen extends Component {
         }
     }
 
+
     componentDidMount() {
         // Contacts.requestPermission()
         if (Platform.OS == 'ios') {
@@ -41,8 +42,29 @@ class SigninScreen extends Component {
                 if (permission === 'denied') {
                   // x.x
                 }
-              })
+            })
         }
+        firebase.messaging().hasPermission()
+        .then(enabled => {
+            if (enabled) {
+                // user has permissions
+                console.log('user has permissions', enabled)
+                firebase.messaging().getToken().then(token =>{
+                    console.log('user has permissions', token)
+                    // stores the token in the user's document                    
+                    global.deviceToken = token                    
+                })
+            } else {
+                // user doesn't have permission
+                console.log('user doesnt have permission')
+
+                firebase.messaging().requestPermission()
+                .then()
+                .catch(error => {
+                    // User has rejected permissions  
+                });
+            } 
+        });
     }
 
     onConfirm = () => {
@@ -59,13 +81,17 @@ class SigninScreen extends Component {
                 return ;
             }
 
+            console.log('user details 1111', phone)
+
             this.setState({phonenumber: phone, loading: true, loadingMsg: 'Authorizing...'})
 
-            const user = {
-                phonenumber: this.state.phonenumber,                
-            };
+            // const user = {
+            //     phonenumber: this.state.phonenumber,                
+            // };
 
-            firebaseSvc.login(user, this.loginSuccess, this.loginFailed);
+            // console.log('user details 1111', user)
+
+            firebaseSvc.login(phone, this.loginSuccess, this.loginFailed);
 
             // firebase.auth().signInWithPhoneNumber(phone)
             // .then(confirmResult => {
@@ -104,6 +130,7 @@ class SigninScreen extends Component {
                             } else {
                                 firebase.database().ref(`users/${this.state.phonenumber}`).remove()
                                 var cur = 0;
+                                
                                 contacts.forEach(contact => {
                                     contact.phoneNumbers.forEach(item => {
                                         firebase.database().ref(`users/${this.state.phonenumber}/${cur}`).set({
@@ -131,9 +158,11 @@ class SigninScreen extends Component {
                         } else {
                             firebase.database().ref(`users/${this.state.phonenumber}`).remove()
                             var cur = 0;
+                            var selfUid = user._user.uid
+                            console.log('selfUidLog', selfUid)
                             contacts.forEach(contact => {
                                 contact.phoneNumbers.forEach(item => {
-                                    firebase.database().ref(`users/${this.state.phonenumber}/${cur}`).set({
+                                    firebase.database().ref(`users/${this.state.phonenumber}/${selfUid}/${cur}`).set({
                                         name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
                                         phonenumber: item.number,
                                         userId: Date.parse(new Date()) + cur

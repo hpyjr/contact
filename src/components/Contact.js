@@ -15,18 +15,26 @@ class Contact extends Component {
     }
 
     componentDidMount() {
-        var phonenumber = this.props.contact.phonenumber.replace(/\s/g, '')
-        if(phonenumber.charAt(0) !== '+'){
-            phonenumber = '+' + this.props.countryCallingCode + phonenumber
-        }
-        firebase.database().ref(`users/${phonenumber}`).once('value', snapshot => {
-            if(snapshot.exists()) {
-                const contacts = snapshot.val()
-                this.setState({loading: false, commonContacts: getCommonContacts(this.props.contactInfo.myContacts, contacts)})
-            } else {
-                this.setState({loading: false, commonContacts: []})
+        
+        console.log('this.props.selectedIndex', this.props.contact)
+
+        if (this.props.selectedIndex == 0) {
+            var phonenumber = this.props.contact.phonenumber.replace(/\s/g, '')
+            if(phonenumber.charAt(0) !== '+'){
+                phonenumber = '+' + this.props.countryCallingCode + phonenumber
             }
-        })
+            var selfUid =global.userId
+            console.log('udidNumber', selfUid)
+            firebase.database().ref(`users/${phonenumber}/${selfUid}`).once('value', snapshot => {
+                if(snapshot.exists()) {
+                    const contacts = snapshot.val()
+                    this.setState({loading: false, commonContacts: getCommonContacts(this.props.contactInfo.myContacts, contacts)})
+                    console.log('commonContacts 44444', this.state.commonContacts)
+                } else {
+                    this.setState({loading: false, commonContacts: []})
+                }
+            })
+        }        
     }
 
     renderConnection(){
@@ -52,19 +60,46 @@ class Contact extends Component {
         return (
             <View style={{flexDirection: 'row', height: 60, alignItems: 'center', borderColor: 'lightgray', borderBottomWidth: 1}}>
                 <View style={{width: '60%', paddingLeft: 25}}>
-                    <Text>{this.props.contact.name}</Text>
-                    <Text style={{color: 'gray'}}>{this.props.contact.phonenumber}</Text>
+                    <Text>{
+                        this.props.selectedIndex == 1
+                        ?
+                        this.props.contact.groupDetails.groupName
+                        :
+                        this.props.contact.name
+                        }</Text>
+                    <Text style={{color: 'gray'}}>{
+                        this.props.selectedIndex == 0
+                        ?
+                        this.props.contact.phonenumber
+                        :
+                        ''
+                    }</Text>
                 </View>
 
             {/* {this.renderConnection()} */}
                 {
-                    this.props.contact.count == 0
-                    ?
-                    null
-                    :
+                    // this.props.contact.count == 0
+                    // ?
+                    // null
+                    // :
                     <View style={{paddingHorizontal: 10}}>                    
-                        <TouchableOpacity onPress={() => this.props.onDetailConnection(this.state.commonContacts)}>
-                            <Text style={{paddingHorizontal: 10, paddingVertical: 5, borderColor: 'gray', borderWidth: 1}}>{this.props.contact.count} connections</Text>
+                        <TouchableOpacity onPress={() =>                                                 
+                        {
+                            this.props.contact.count == 0 || this.props.selectedIndex == 1
+                            ?
+                            this.props.onNoConnection(this.state.commonContacts)
+                            :
+                            this.props.onDetailConnection(this.state.commonContacts)
+                        }
+                        }>
+                            <Text style={{paddingHorizontal: 10, paddingVertical: 5, borderColor: 'gray', borderWidth: 1}}>
+                            {
+                                this.props.selectedIndex == 0
+                                ?
+                                this.props.contact.count + ' connections'
+                                :
+                                'Start Chat'
+                                } </Text>
                         </TouchableOpacity>
                     </View>
                 }                

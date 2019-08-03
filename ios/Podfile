@@ -10,7 +10,9 @@ target 'contactapp' do
   pod 'Firebase/Messaging'
   pod 'Firebase/InAppMessaging'
   pod 'Firebase/Core'
+  pod 'Firebase/Storage'
   pod 'Firebase/InAppMessagingDisplay'
+  pod 'Firebase/Firestore'
 
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
   pod 'React', :path => '../node_modules/react-native/'
@@ -37,6 +39,8 @@ target 'contactapp' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  pod 'react-native-onesignal', :path => '../node_modules/react-native-onesignal'
 
   target 'contactappTests' do
     inherit! :search_paths
