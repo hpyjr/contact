@@ -76,5 +76,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera is used to click the photo and send in chat</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo library is used to select the photo and send in chat</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mircrophone is used to record voice</string>
 </dict>
 </plist>

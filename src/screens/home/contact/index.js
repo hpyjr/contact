@@ -46,6 +46,8 @@ class ContactScreen extends Component {
             groupName:''
         }
 
+        global.selectedIndex = 0
+
         // OneSignal.init("350aa5f2-ae5b-4e4b-b2e6-3178cbb6957b");
 
         // OneSignal.addEventListener('received', this.onReceived);
@@ -118,6 +120,15 @@ class ContactScreen extends Component {
     //Create group
     creatGroup = () =>{
 
+        var groupName = this.state.groupName;
+
+        if (groupName.length == 0) {
+            alert('Please enter group name')
+            return
+        } else if (this.state.selectedValues.length == 0) {
+            alert('Please select group memeber')
+            return
+        }
         var that = this        
         this.setState({ largImageModal: false })
        const groupMambers = [];
@@ -143,7 +154,6 @@ class ContactScreen extends Component {
 
         const groupMessages = [groupWelcomeMessage];
         
-        var groupName = this.state.groupName;
         const groupData = {
             createdBy: selfUid,
             groupName,
@@ -212,6 +222,7 @@ class ContactScreen extends Component {
           selectedIndex: index
         });
 
+        global.selectedIndex = index
         if (index == 1) {
             this.getGroupIdsref()
         }

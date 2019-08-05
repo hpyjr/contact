@@ -208,10 +208,17 @@ PODS:
   - React-jsinspector (0.60.4)
   - react-native-contacts (5.0.2):
     - React
+  - react-native-image-picker (1.0.2):
+    - React
   - react-native-onesignal (3.3.1):
     - OneSignal (= 2.10.0)
     - React (< 1.0.0, >= 0.13.0)
   - react-native-simple-toast (0.1.1):
+    - React
+  - react-native-video (4.4.2):
+    - React
+    - react-native-video/Video (= 4.4.2)
+  - react-native-video/Video (4.4.2):
     - React
   - React-RCTActionSheet (0.60.4):
     - React-Core (= 0.60.4)
@@ -274,8 +281,10 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
   - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
+  - react-native-video (from `../node_modules/react-native-video`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -345,10 +354,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-contacts:
     :path: "../node_modules/react-native-contacts"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-onesignal:
     :path: "../node_modules/react-native-onesignal"
   react-native-simple-toast:
     :path: "../node_modules/react-native-simple-toast"
+  react-native-video:
+    :path: "../node_modules/react-native-video"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -417,8 +430,10 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 7549641e48bafae7bfee3f3ea19bf4901639c5de
   React-jsinspector: 73f24a02fa684ed6a2b828ba116874a2191ded88
   react-native-contacts: a311f1e1536a6b037c5bf688e7979c26a865aba8
+  react-native-image-picker: 4c1d9b0377a3291d9b9a0e65c89e87d435e74516
   react-native-onesignal: d5497ae1e9b85e4c20836f7fb98df5945736f6b9
   react-native-simple-toast: 3e821c055485f03c6f6fa9b9431c1081ba46d37a
+  react-native-video: 0871593feb37ae297a20943d77a142b30a1776b6
   React-RCTActionSheet: 9f71d7ae3e8fb10e08d162cbf14c621349dbfab3
   React-RCTAnimation: 981d8c95b0e30918a9832ccac32af83562a27fae
   React-RCTBlob: 21e73d1020a302a75fed30dbaee9f15287b80baa
@@ -434,6 +449,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   yoga: c2c050f6ae6e222534760cc82f559b89214b67e2
 
-PODFILE CHECKSUM: 9f035008ecbdd370dd10c3231d5f59b9d150d533
+PODFILE CHECKSUM: fd686455c3ad9fc3993236eeb840c5d7404b3211
 
 COCOAPODS: 1.7.4

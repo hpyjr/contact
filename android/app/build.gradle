@@ -188,6 +188,9 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-video')
+    implementation project(':react-native-action-sheet')
+    implementation project(':react-native-image-picker')
     implementation project(':react-native-onesignal')
     implementation project(':@react-native-firebase_fiam')
     implementation fileTree(dir: "libs", include: ["*.jar"])
