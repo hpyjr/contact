@@ -7,6 +7,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import firebaseSvc from '../../../components/FirebaseSvc'
 import { Dimensions } from 'react-native'
 import AccessoryBar from '../../../lib/AccessoryBar'
+import OneSignal from 'react-native-onesignal';
 
 const {width, height} = Dimensions.get('window')
 class MessageScreen extends Component {
@@ -17,9 +18,9 @@ class MessageScreen extends Component {
         }
     }
 
-    componentDidMount () {    
-        
-        console.log('params log 22222', this.props.navigation.state.params.selectedIndex)
+    componentDidMount () {  
+        // OneSignal.removeEventListener('received', this.onReceived);        
+        OneSignal.inFocusDisplaying(0);
 
         DeviceEventEmitter.addListener('callMethod', this.refreshMessages.bind(this))        
 
@@ -33,13 +34,21 @@ class MessageScreen extends Component {
                 if (contacts._value != undefined) {
                     var chatIdValue = Object.keys(contacts._value)[0]
 
-                    console.log('UserDetails reciverUser', Object.keys(contacts._value)[0])
+                    console.log('UserDetails reciverUser 111111', chatIdValue)
 
-                    if (chatIdValue === 'chat_groups_ids') {
-                        global.reciverUser = Object.keys(contacts._value)[1];                        
-                    } else {
-                        global.reciverUser = Object.keys(contacts._value)[0];                        
+                    if (chatIdValue === 'chat_groups_ids' || chatIdValue === 'playerId') {
+                        chatIdValue = Object.keys(contacts._value)[1];
+                    } 
+
+                    console.log('UserDetails reciverUser 2222 ', chatIdValue)
+
+                    if (chatIdValue === 'chat_groups_ids' || chatIdValue === 'playerId') {
+                        chatIdValue = Object.keys(contacts._value)[2];
                     }
+
+                    console.log('UserDetails reciverUser 33333', chatIdValue)
+
+                    global.reciverUser = chatIdValue;                        
                 }
             })    
             setTimeout(() => {
@@ -86,48 +95,37 @@ class MessageScreen extends Component {
         var removed_elements = this.state.messages.splice(start_index, number_of_elements_to_remove);
     }
     
-    refreshMessages = () => {
-        this.removeAllObjecstFromArray()
+    refreshMessages = (currentMessage) => {
+        // this.removeAllObjecstFromArray()
 
+        console.log('current message which is deleted', currentMessage.currentMessage)
 
-        setTimeout(() => {
-            if (this.props.navigation.state.params.selectedIndex == 0) {
-                var selectedUserPhon =  this.props.navigation.state.params.phonenumber.phonenumber.replace(/\s/g,'')
-                
-                firebase.database().ref(`users/${selectedUserPhon}`).once('value', snapshot => {                
-                    const contacts = snapshot                
-                    if (contacts._value != undefined) {
-                        var chatIdValue = Object.keys(contacts._value)[0]                    
+        this.setState(previousState =>
+            ({ messages: previousState.messages.filter(message => message.id !== currentMessage.currentMessage.id) }))
+
+        // setTimeout(() => {
+        //     if (this.props.navigation.state.params.selectedIndex == 0) {
+        //         firebaseSvc.refOn(message =>                                                    
+        //             this.setState(previousState => ({
+        //                 messages: GiftedChat.append(previousState.messages, message),                        
+        //             })),                    
+        //         );            
     
-                        if (chatIdValue === 'chat_groups_ids') {
-                            global.reciverUser = Object.keys(contacts._value)[1];                        
-                        } else {
-                            global.reciverUser = Object.keys(contacts._value)[0];                        
-                        }
-                    }
-                })    
-                
-                firebaseSvc.refOn(message =>                                
-                    this.setState(previousState => ({
-                        messages: GiftedChat.append(previousState.messages, message),
-                    })),
-                    this.forceUpdate()
-                );            
-    
-            } else {
-                firebaseSvc.refOnGroup(message =>
-                    this.setState(previousState => ({
-                      messages: GiftedChat.append(previousState.messages, message),
-                    })),
-                    this.forceUpdate()
-                );            
-            } 
-        }, 1000);        
+        //     } else {
+        //         firebaseSvc.refOnGroup(message =>
+        //             this.setState(previousState => ({
+        //               messages: GiftedChat.append(previousState.messages, message),
+        //             })),                    
+        //         );            
+        //     } 
+        // }, 1000);        
     }
 
     componentWillUnmount() {
+        OneSignal.inFocusDisplaying(1);
         firebaseSvc.refOff();
     }
+
 
     componentWillMount() {
         this.setState({
@@ -174,140 +172,71 @@ class MessageScreen extends Component {
         } )        
   }
 
+  onDelete(messageIdToDelete) {
+    this.setState(previousState =>
+      ({ messages: previousState.messages.filter(message => message.id !== messageIdToDelete) }))
+  }
 
-  
-// showImagePicker = (uri) =>{
-//     console.log('image uri', uri[0].image)
-//     this.uploadImage (uri[0].image)
-// }
-// uploadImage = (uri) => {
-//     uri = uri
-//     console.log('image uri ^^ ', uri)
-//     const ext = uri.split('.').pop(); // Extract image extension
-//     console.log('image uri &&&', ext)
-//    // const ext = 'png'; // Extract image extension
-//     const filename = ""+`${new Date()}.${ext}`; // Generate unique name
-//     // this.setState({ uploading: true });
-//     //Uploading image
-//     firebase
-//       .storage()
-//       .ref(`images/${filename}`)
-//       .putFile(uri)
-//       .on(
-//         firebase.storage.TaskEvent.STATE_CHANGED,
-//         snapshot => {
-//           let state = {};
-//           state = {
-//             ...state,
-//             progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 // Calculate progress percentage
-//           };
-//           if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-//             global.image = snapshot.downloadURL ;  
-            
-//             //Create message for send if image selected
-//             var messageData = {text: '',
-//             user: {_id:global.userId},             
-//             _id:global.userId }  
-
-//             this.state.messages.push(messageData);      //Update message list 
-
-//             if(ext!=null){
-//                 if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
-//                //Call fuction to upload image
-//                 firebaseSvc.sendImage(message =>
-//                   {
-//                  console.log('image array length', message)   
-//                     }
-//                     );  
-//                 }
-//                 else {
-//                 //if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
-//                     //Call fuction to upload image
-//                      firebaseSvc.sendVideo(message =>
-//                        {
-//                       console.log('Video length', message)   
-//                        }
-//                          );  
-//                      }
-//             }  
-                    
-//           }
-          
-     
-//         },
-//         error => {       
-//           alert('Sorry, Try again.');
-//         }
-//       );
-//   };
-  
-showImagePicker = (uri) =>{
-    console.log('image uri', uri[0].image)
-    this.uploadImage (uri[0].image)
-}
-uploadImage = (uri) => {
-    uri = uri
-    console.log('image uri ^^ ', uri)
-    const ext = uri.split('.').pop(); // Extract image extension
-    console.log('image uri &&&', ext)
-   // const ext = 'png'; // Extract image extension
-    const filename = ""+`${new Date()}.${ext}`; // Generate unique name
-    // this.setState({ uploading: true });
-    var fileTypeFolder = 'images';
+    showImagePicker = (uri) =>{
+        console.log('image uri', uri[0].image)
+        this.uploadImage (uri[0].image)
+    }
+    uploadImage = (uri) => {
+        uri = uri
+        const ext = uri.split('.').pop(); // Extract image extension
+        const filename = ""+`${new Date()}.${ext}`; // Generate unique name
+        var fileTypeFolder = 'images';
         if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
-        //Call fuction to upload image  
-        fileTypeFolder = 'images'; 
-         }
-         else {
-         //if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
-             //Call fuction to upload image
-             fileTypeFolder = 'videos';   
-         }
-    //Uploading image
-    firebase
-      .storage()
-      .ref(`${fileTypeFolder}/${filename}`)
-      .putFile(uri)
-      .on(
-        firebase.storage.TaskEvent.STATE_CHANGED,
-        snapshot => {
-          let state = {};
-          state = {
-            ...state,
-            progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 // Calculate progress percentage
-          };
-          if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-            global.image = snapshot.downloadURL ;  
-            
-            //Create message for send if image selected
-            var messageData = {text: '',
-            user: {_id:global.userId},             
-            _id:global.userId }  
-
-            this.state.messages.push(messageData);      //Update message list 
-            if(ext!=null){
-                var fileType =0;
-                if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
-               //Call fuction to upload image  
-               fileType = 1;             
-                }
-                else {
-                //if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
-                    //Call fuction to upload image
-                    fileType = 2;      
-                }
-                firebaseSvc.sendMedia(fileType,snapshot.downloadURL); 
-            }  
-                    
-          }
-          
-     
-        },
-        error => {       
-          alert('Sorry, Try again.');
+            //Call fuction to upload image  
+            fileTypeFolder = 'images'; 
+        } else {
+            //if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
+            //Call fuction to upload image
+            fileTypeFolder = 'videos';   
         }
-      );
-  };
+
+        //Uploading image
+        firebase
+        .storage()
+        .ref(`${fileTypeFolder}/${filename}`)
+        .putFile(uri)
+        .on(
+            firebase.storage.TaskEvent.STATE_CHANGED,
+            snapshot => {
+            let state = {};
+            state = {
+                ...state,
+                progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 // Calculate progress percentage
+            };
+            if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
+                // global.image = snapshot.downloadURL ;  
+                
+                //Create message for send if image selected
+                var messageData = {text: '',
+                user: {_id:global.userId},             
+                _id:global.userId }  
+
+                this.state.messages.push(messageData);      //Update message list 
+
+                console.log('messages with image', this.state.messages)
+                if(ext != null) {
+                    var fileType =0;
+                    if(ext==='jpg'|| ext==='JPG' || ext==='JPEG' || ext==='jpeg' || ext==='PNG' || ext==='png'){
+                        //Call fuction to upload image  
+                        fileType = 1;             
+                    } else {                    
+                        fileType = 2;      
+                    }
+                    firebaseSvc.sendMedia(fileType,snapshot.downloadURL); 
+                    
+                }                          
+            }
+        },
+            error => {       
+                alert('Sorry, Try again.');
+            }
+        );
+    };
 
    
 
@@ -334,7 +263,8 @@ uploadImage = (uri) => {
                 <GiftedChat                     
                     messages={this.state.messages}
                     onSend={
-                        this.props.navigation.state.params.selectedIndex === 1 ?
+                        this.props.navigation.state.params.selectedIndex === 1 
+                        ?
                         firebaseSvc.sendInGroup
                         :
                         firebaseSvc.send

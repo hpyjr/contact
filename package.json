@@ -25,12 +25,12 @@
     "react-native-onesignal": "^3.3.1",
     "react-native-phone-input": "^0.2.4",
     "react-native-popover-view": "^2.0.2",
-    "react-native-video":"4.4.4",
     "react-native-popup-menu": "^0.15.6",
     "react-native-search-filter": "^0.1.4",
     "react-native-segmented-control-tab": "^3.4.1",
     "react-native-simple-toast": "^0.1.1",
     "react-native-vector-icons": "^6.6.0",
+    "react-native-video": "4.4.4",
     "react-navigation": "^3.11.1",
     "react-redux": "^7.1.0",
     "redux": "^4.0.4"

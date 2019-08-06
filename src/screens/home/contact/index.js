@@ -19,7 +19,7 @@ import { getCommonContacts } from '../../../utils/contact'
 const {width, height} = Dimensions.get('window')
 import Contacts from 'react-native-contacts';
 import SegmentedControlTab from "react-native-segmented-control-tab";
-// import OneSignal from 'react-native-onesignal';
+import OneSignal from 'react-native-onesignal';
 
 import firebaseSvc from '../../../components/FirebaseSvc'
 
@@ -48,35 +48,36 @@ class ContactScreen extends Component {
 
         global.selectedIndex = 0
 
-        // OneSignal.init("350aa5f2-ae5b-4e4b-b2e6-3178cbb6957b");
+        OneSignal.init("350aa5f2-ae5b-4e4b-b2e6-3178cbb6957b");
 
-        // OneSignal.addEventListener('received', this.onReceived);
-        // OneSignal.addEventListener('opened', this.onOpened);
-        // OneSignal.addEventListener('ids', this.onIds);
-        // OneSignal.configure(); 	// triggers the ids event
+        OneSignal.addEventListener('received', this.onReceived);
+        OneSignal.addEventListener('opened', this.onOpened);
+        OneSignal.addEventListener('ids', this.onIds);
+        OneSignal.configure(); 	// triggers the ids event
+        OneSignal.inFocusDisplaying(1);
     }
 
     componentWillUnmount() {
-        // OneSignal.removeEventListener('received', this.onReceived);
-        // OneSignal.removeEventListener('opened', this.onOpened);
-        // OneSignal.removeEventListener('ids', this.onIds);
+        OneSignal.removeEventListener('received', this.onReceived);
+        OneSignal.removeEventListener('opened', this.onOpened);
+        OneSignal.removeEventListener('ids', this.onIds);
     }
     
-    // onReceived(notification) {
-    //     console.log("Notification received: ", notification);
-    // }
+    onReceived(notification) {
+        console.log("Notification received: ", notification);
+    }
 
-    // onOpened(openResult) {
-    //     console.log('Message: ', openResult.notification.payload.body);
-    //     console.log('Data: ', openResult.notification.payload.additionalData);
-    //     console.log('isActive: ', openResult.notification.isAppInFocus);
-    //     console.log('openResult: ', openResult);
-    // }
+    onOpened(openResult) {
+        console.log('Message: ', openResult.notification.payload.body);
+        console.log('Data: ', openResult.notification.payload.additionalData);
+        console.log('isActive: ', openResult.notification.isAppInFocus);
+        console.log('openResult: ', openResult);
+    }
 
-    // onIds(device) {
-    //     console.log('Device info: ', device);
-    //     global.playerId = device.userId
-    // }
+    onIds(device) {
+        console.log('Device info: ', device);
+        global.playerId = device.userId
+    }
 
      //Send message in group
      getGroupIdsref = () =>{  
@@ -183,19 +184,17 @@ class ContactScreen extends Component {
             counts++;
             firebase.database().ref(`users/${contactNumber}/chat_groups_ids`).once('value', snapshot => {
                 if(snapshot.exists()) {
-            var groupKeys = snapshot._value;
-            console.log('paldinesh', groupKeys)  
-            if(groupKeys!=undefined){
-                chat_groups_ids.push(...groupKeys)
-            }
-            firebase.database().ref(`users/${contactNumber}/`).update({chat_groups_ids})              
-                console.log('paldinesh list', chat_groups_ids)  
-            }
-            else{
-                firebase.database().ref(`users/${contactNumber}/`).update({chat_groups_ids})
-            }                      
-            }            
-            )  
+                    var groupKeys = snapshot._value;
+                    console.log('paldinesh', groupKeys)  
+                    if(groupKeys!=undefined){
+                        chat_groups_ids.push(...groupKeys)
+                    }
+                    firebase.database().ref(`users/${contactNumber}/`).update({chat_groups_ids})              
+                    console.log('paldinesh list', chat_groups_ids)  
+                } else{
+                    firebase.database().ref(`users/${contactNumber}/`).update({chat_groups_ids})
+                }                      
+            })  
 
             console.log('global.newCreatedKey 2311212', counts, (groupMambers1.length) - 1)
 
@@ -315,10 +314,10 @@ class ContactScreen extends Component {
 
                             contacts.forEach(contact => {
 
-                                // setTimeout(() => {
-                                //     console.log('user phone number', global.phoneNumber, global.playerId)
-                                //     firebase.database().ref(`users/${global.phoneNumber}`).update({"playerId":global.playerId})    
-                                // }, 2000);
+                                setTimeout(() => {
+                                    console.log('user phone number', global.phoneNumber, global.playerId)
+                                    firebase.database().ref(`users/${global.phoneNumber}`).update({"playerId":global.playerId})    
+                                }, 2000);
                                 
                                 contact.phoneNumbers.forEach(item => {
                                     firebase.database().ref(`users/${user._user.phoneNumber}/${selfUid}/${cur}`).set({
@@ -349,27 +348,28 @@ class ContactScreen extends Component {
             }
             var object = {}
             // firebase.database().ref(`users/${phonenumber}`).remove()
-            var selfUid =global.userId
-                            console.log('udidNumber', selfUid)
-            firebase.database().ref(`users/${phonenumber}/${selfUid}`).once('value', snapshot => {
-                console.log('paldinesh', snapshot)
-                if(snapshot.exists()) {
-                    this.setState({loading: false, commonContacts: getCommonContacts(this.state.contacts, this.state.contacts)})
-                    var object = {'name' : element.name, 'phonenumber': element.phonenumber, 'count' : this.state.commonContacts.length}
+            var selfUid =global.userId            
+            firebase.database().ref(`users/${phonenumber}/${selfUid}`).once('value', snapshotNew => {
 
-                    if (global.phoneNumber.replace(/\s/g,'') != element.phonenumber.replace(/\s/g,'')) {
-                        this.state.newArray.push(object)
-                    }
-                    
-                } else {                    
-                    this.setState({loading: false, commonContacts: []})
-                    var object = {'name' : element.name, 'phonenumber': element.phonenumber, 'count' : 0}
-                    if (global.phoneNumber.replace(/\s/g,'') != element.phonenumber.replace(/\s/g,'')) {
-                        this.state.newArray.push(object)
-                    }                    
-                }
-                
-                
+                firebase.database().ref(`users/${phonenumber}`).once('value', snapshot => {
+                    console.log('paldinesh', snapshot._value.playerId)
+                    var playerId = snapshot._value.playerId
+                    if(snapshotNew.exists()) {
+
+                        this.setState({loading: false, commonContacts: getCommonContacts(this.state.contacts, this.state.contacts)})
+
+                        var object = {'name' : element.name, 'phonenumber': element.phonenumber, 'count' : this.state.commonContacts.length, 'playerId': playerId}
+                        if (global.phoneNumber.replace(/\s/g,'') != element.phonenumber.replace(/\s/g,'')) {
+                            this.state.newArray.push(object)
+                        }                    
+                    } else {                    
+                        this.setState({loading: false, commonContacts: []})
+                        var object = {'name' : element.name, 'phonenumber': element.phonenumber, 'count' : 0, 'playerId': playerId}
+                        if (global.phoneNumber.replace(/\s/g,'') != element.phonenumber.replace(/\s/g,'')) {
+                            this.state.newArray.push(object)
+                        }                    
+                    }  
+                })                                              
                 this.forceUpdate()
             })             
         });   
@@ -386,7 +386,7 @@ class ContactScreen extends Component {
         
         this.state.contacts.forEach(element => {
             
-            console.log('current value of object', element.phonenumber.replace(/\s/g,''))
+            // console.log('current value of object', element.phonenumber.replace(/\s/g,''))
 
             firebase.database().ref(`users/${element.phonenumber.replace(/\s/g,'')}`).once('value', snapshot => {                
                 const contacts = snapshot                                
@@ -407,7 +407,7 @@ class ContactScreen extends Component {
     }
 
     groupMemeberSelected = (key) => {
-        console.log("list key value", key)
+        // console.log("list key value", key)
 
         this.state.groupArray.map((item) => {
             if (item.userUid === key.userUid) {
@@ -497,8 +497,10 @@ class ContactScreen extends Component {
         console.log('item value set', item, this.state.selectedIndex)
 
         if (this.state.selectedIndex == 0) {
+            global.playerId = item.playerId
             this.props.navigation.navigate('message', {selectedIndex: 0, phonenumber: item})
         } else {
+            global.playerId = undefined
             global.newCreatedKey = item.groupKey
             setTimeout(() => {
                 this.props.navigation.navigate('message', {selectedIndex: 1, groupDetailsNew: item})
@@ -512,7 +514,7 @@ class ContactScreen extends Component {
 
         // console.log('new object creataed', this.state.newArray)
         
-        console.log("groupArray list group data", this.state.userGroupArray)
+        // console.log("groupArray list group data", this.state.newArray)
 
         
         return (
@@ -636,7 +638,7 @@ class ContactScreen extends Component {
                 </Popover>
                 <Modal transparent={true} animationType={'slide'} visible={this.state.largImageModal}
                     onRequestClose={() => { this.largImageModal(false) }}>                        
-                    <View borderRadius={5} style={{  backgroundColor: '#F5FcFF', marginTop: 100, width: width, height: height-200}}>
+                    <View borderRadius={5} style={{  backgroundColor: '#F5FcFF', marginTop: 90, width: width, height: height-200}}>
                         <View style={{borderBottomColor:'lightgray', borderBottomWidth:1.0, flexDirection:'row'}}>
                             <TouchableOpacity style={{left:10, top:10, height:44}} onPress={() => { this.largImageModal(false) }} >
                                 <Text style={{textAlign:'center', width:44, fontSize:20, borderColor: 'gray', justifyContent:'center', alignItems:'center', borderWidth: 1}}>X</Text>

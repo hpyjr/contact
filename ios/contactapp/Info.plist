@@ -48,10 +48,16 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera is used to click the photo and send in chat</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Contacts app would like to access your contacts</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mircrophone is used to record voice</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo library is used to select the photo and send in chat</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -64,6 +70,7 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -76,11 +83,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>Camera is used to click the photo and send in chat</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Photo library is used to select the photo and send in chat</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Mircrophone is used to record voice</string>
 </dict>
 </plist>
