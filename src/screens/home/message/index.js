@@ -34,19 +34,13 @@ class MessageScreen extends Component {
                 if (contacts._value != undefined) {
                     var chatIdValue = Object.keys(contacts._value)[0]
 
-                    console.log('UserDetails reciverUser 111111', chatIdValue)
-
                     if (chatIdValue === 'chat_groups_ids' || chatIdValue === 'playerId') {
                         chatIdValue = Object.keys(contacts._value)[1];
                     } 
 
-                    console.log('UserDetails reciverUser 2222 ', chatIdValue)
-
                     if (chatIdValue === 'chat_groups_ids' || chatIdValue === 'playerId') {
                         chatIdValue = Object.keys(contacts._value)[2];
                     }
-
-                    console.log('UserDetails reciverUser 33333', chatIdValue)
 
                     global.reciverUser = chatIdValue;                        
                 }

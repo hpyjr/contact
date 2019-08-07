@@ -64,7 +64,7 @@ class FirebaseSvc {
       let userRef = firebase.database().ref(`UserGroups/${groupId}/groupMessages/${currentMessage.id}`);
       userRef.remove()
     }     
-    
+        
     DeviceEventEmitter.emit('callMethod',  {currentMessage: currentMessage})
   }
   
@@ -121,17 +121,17 @@ class FirebaseSvc {
       senderNewId = this.setOneToOneChat (global.userId,global.reciverUser).replace(/\s/g,'');
       this.ref.set(message);
       // global.image = '';
-      this.sendNotificaitons(text)
+      this.sendNotifications(text)
     }
   };
 
-  sendNotificaitons (text) {
+  sendNotifications (text) {
     let data = {"title": "Message sent"} // some array as payload
     var message = text
     if (text === 'image') {
-      message = 'Image is sent'
+      message = 'An image received'
     } else if (text === 'video') {
-      message = 'A video is sent'
+      message = 'A video received'
     }
       let contents = {        
         'en': message
@@ -140,6 +140,8 @@ class FirebaseSvc {
         OneSignal.postNotification(contents, data, global.playerId);
       }
   }
+  
+  
   // send the message to the Backend
   sendMedia = (fileType,filePath) => {
     var chatType = global.selectedIndex;                  
@@ -176,17 +178,25 @@ class FirebaseSvc {
     if(chatType === 0 ){
       senderNewId = this.setOneToOneChat (global.userId,global.reciverUser).replace(/\s/g,'');
       this.ref.set(message);
+
+      if(fileType===1){
+        this.sendNotifications('image')
+      } else if(fileType===2){
+        this.sendNotifications('video')
+      }
     }
     
       //Froup Chat
       else if(chatType === 1){        
         this.groupSendref.push(message);
+
+        if(fileType===1){
+          this.sendNotificationsInGroup('image')
+        } else if(fileType===2){
+          this.sendNotificationsInGroup('video')
+        }
       }
-      if(fileType===1){
-        this.sendNotificaitons('image')
-      } else if(fileType===2){
-        this.sendNotificaitons('video')
-      }
+      
       filePath = '';
     };
 
@@ -204,6 +214,25 @@ class FirebaseSvc {
       this.ref.set(message);
       // global.image = '';
     };
+
+    sendNotificationsInGroup (text) {
+      let data = {"title": "Message sent"} // some array as payload
+      var message = text
+      if (text === 'image') {
+        message = 'An image received'
+      } else if (text === 'video') {
+        message = 'A video received'
+      }
+        let contents = {        
+          'en': message
+        }
+
+
+        console.log('global.playerIds data', global.playerIds)
+        if (global.playerIds.length > 0) {
+          OneSignal.postNotification(contents, data, global.playerIds);
+        }
+    }
 
   // send the message to the Backend
   sendInGroup = messages => {
@@ -225,6 +254,8 @@ class FirebaseSvc {
       senderNewId = this.setOneToOneChat (global.userId,global.reciverUser).replace(/\s/g,'');        
       this.groupSendref.push(message);
       global.mediafile = '';
+
+      this.sendNotificaitonsInGroup(text)
     }
   };
 

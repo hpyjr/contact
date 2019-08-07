@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
-import { SafeAreaView, View, TextInput, Text, Image, Platform, TouchableOpacity } from 'react-native'
+import { SafeAreaView, View, TextInput, Text, Image, Platform, PermissionsAndroid, TouchableOpacity } from 'react-native'
 import logo from '../../../assets/images/logo.png'
 import styles from './styles'
 import PhoneInput from 'react-native-phone-input'
 import Toast from 'react-native-simple-toast'
 import firebase from 'react-native-firebase'
 import Contacts from 'react-native-contacts';
-import { PermissionsAndroid } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import firebaseSvc from '../../components/FirebaseSvc'
@@ -130,10 +129,10 @@ class SigninScreen extends Component {
                             } else {
                                 firebase.database().ref(`users/${this.state.phonenumber}`).remove()
                                 var cur = 0;
-                                
+                                var selfUid = user._user.uid
                                 contacts.forEach(contact => {
                                     contact.phoneNumbers.forEach(item => {
-                                        firebase.database().ref(`users/${this.state.phonenumber}/${cur}`).set({
+                                        firebase.database().ref(`users/${user._user.phoneNumber}/${selfUid}/${cur}`).set({
                                             name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
                                             phonenumber: item.number,
                                             userId: Date.parse(new Date()) + cur
@@ -156,13 +155,15 @@ class SigninScreen extends Component {
                         if (err === 'denied') {
                             
                         } else {
-                            firebase.database().ref(`users/${this.state.phonenumber}`).remove()
-                            var cur = 0;
                             var selfUid = user._user.uid
+
+                            firebase.database().ref(`users/${selfUid}`).remove()
+                            var cur = 0;
+                            
                             console.log('selfUidLog', selfUid)
                             contacts.forEach(contact => {
                                 contact.phoneNumbers.forEach(item => {
-                                    firebase.database().ref(`users/${this.state.phonenumber}/${selfUid}/${cur}`).set({
+                                    firebase.database().ref(`users/${selfUid}/${selfUid}/${cur}`).set({
                                         name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
                                         phonenumber: item.number,
                                         userId: Date.parse(new Date()) + cur

@@ -1,35 +1,50 @@
 {
   "project_info": {
-    "project_number": "944380073995",
-    "firebase_url": "https://contactapp-eee6f.firebaseio.com",
-    "project_id": "contactapp-eee6f",
-    "storage_bucket": "contactapp-eee6f.appspot.com"
+    "project_number": "353328083696",
+    "firebase_url": "https://contacts-21d64.firebaseio.com",
+    "project_id": "contacts-21d64",
+    "storage_bucket": "contacts-21d64.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:944380073995:android:a8daa2dfef4d685e",
+        "mobilesdk_app_id": "1:353328083696:android:a8daa2dfef4d685e",
         "android_client_info": {
           "package_name": "com.contactapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "944380073995-607gp626u71099mcsli855jk92f2ofoo.apps.googleusercontent.com",
+          "client_id": "353328083696-h27guj66cv05jp2rb9jqhh6fp68la1vg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.contactapp",
+            "certificate_hash": "181ea3626205918206f1b2639525b6599386c9d5"
+          }
+        },
+        {
+          "client_id": "353328083696-e5fvnnibgnc574hj0ss8qa6tdje9pqho.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCCKGFGqzHbi9b1MRKPO7hvxqcwkEpUbjQ"
+          "current_key": "AIzaSyCxHkMEEHizAPUSxgiU8EAh1vArc-5hqgc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "944380073995-607gp626u71099mcsli855jk92f2ofoo.apps.googleusercontent.com",
+              "client_id": "353328083696-e5fvnnibgnc574hj0ss8qa6tdje9pqho.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "353328083696-76qk2m6dfl137gc96ka7ndbnuhms8b6p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dexbytes.contact"
+              }
             }
           ]
         }

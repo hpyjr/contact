@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { SafeAreaView, View, Text, TextInput, Alert, Image, Modal, FlatList, TouchableOpacity } from 'react-native'
+import { SafeAreaView, View, Text, TextInput, Dimensions, Alert, PermissionsAndroid, Image, Modal, FlatList, TouchableOpacity } from 'react-native'
 import styles from './styles'
 import firebase from 'react-native-firebase'
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -11,7 +11,7 @@ import Contact from '../../../components/Contact';
 import Spinner from 'react-native-loading-spinner-overlay'
 import { parsePhoneNumber } from 'libphonenumber-js'
 import Popover from 'react-native-popover-view'
-import { Dimensions } from 'react-native'
+
 import { Divider, CheckBox } from 'react-native-elements'
 import SearchInput, { createFilter } from 'react-native-search-filter';
 const KEYS_TO_FILTERS = ['name', 'phonenumber'];
@@ -20,6 +20,9 @@ const {width, height} = Dimensions.get('window')
 import Contacts from 'react-native-contacts';
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import OneSignal from 'react-native-onesignal';
+// import CarrierInfo from 'react-native-carrier-info';
+// import Geocoder from 'react-native-geocoder';
+
 
 import firebaseSvc from '../../../components/FirebaseSvc'
 
@@ -137,12 +140,16 @@ class ContactScreen extends Component {
 
         groupMambers.push(selfUid);
         
-        var  groupMambers1 = [];
+        var groupMambers1 = [];
+        var groupMembersPlayerId = [];
         
         groupMambers1.push(global.phoneNumber)
+        groupMembersPlayerId.push(global.playerId)
+        
         this.state.selectedValues.forEach(element => {
             groupMambers.push(element.userUid);    
             groupMambers1.push(element.phonenumber)
+            groupMembersPlayerId.push(element.playerId)
            
             // groupMambers.push('qL14U05gXmgBWDCBm7dMZ1u675n1');    
         });
@@ -160,7 +167,8 @@ class ContactScreen extends Component {
             groupName,
             groupMambers,
             createdAt: new Date(),
-            groupMessages
+            groupMessages,
+            groupMembersPlayerId
         };
         console.log('udidNumber', selfUid)
 
@@ -204,6 +212,7 @@ class ContactScreen extends Component {
                 setTimeout(() => {
                     var groupDetails = {groupDetails:{groupName:that.state.groupName}}
                 
+                    global.playerIds = groupMembersPlayerId
                     that.props.navigation.navigate('message', {selectedIndex: 1, groupDetailsNew: groupDetails})
                 }, 1000);                
             }
@@ -211,7 +220,28 @@ class ContactScreen extends Component {
         })
     }
 
-    componentDidMount() {        
+    componentDidMount() {  
+                
+        // Geocoder.geocodeAddress('London').then((result) => {
+        //     console.log('Geocoder.geocodeAddress', result)            
+        // });            
+        
+
+        // CarrierInfo.mobileCountryCode()
+        // .then((result) => {
+        //     console.log('CarrierInfo.mobileCountryCode', result)
+        // });
+
+        // CarrierInfo.isoCountryCode()
+        // .then((result) => {
+        //     console.log('CarrierInfo.isoCountryCode', result)
+        // });
+
+        // CarrierInfo.carrierName()
+        // .then((result) => {
+        //     console.log('CarrierInfo.carrierName', result)
+        // });
+
         this.updateContacts()        
     }
 
@@ -269,10 +299,14 @@ class ContactScreen extends Component {
                                 this.setState({loading: false})
                             } else {
                                 global.phoneNumber = user._user.phoneNumber
+                                global.userId = user._user.uid
+                            
+
                                 var cur = 0;
+                                var selfUid = user._user.uid
                                 contacts.forEach(contact => {                                    
                                     contact.phoneNumbers.forEach(item => {
-                                        firebase.database().ref(`users/${user._user.phoneNumber}/${cur}`).set({
+                                        firebase.database().ref(`users/${user._user.phoneNumber}/${selfUid}/${cur}`).set({
                                             name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
                                             phonenumber: item.number,
                                             userId: Date.parse(new Date()) + cur
@@ -352,8 +386,13 @@ class ContactScreen extends Component {
             firebase.database().ref(`users/${phonenumber}/${selfUid}`).once('value', snapshotNew => {
 
                 firebase.database().ref(`users/${phonenumber}`).once('value', snapshot => {
-                    console.log('paldinesh', snapshot._value.playerId)
-                    var playerId = snapshot._value.playerId
+
+                    var playerId = ''
+                    if (snapshot._value != null) {
+                        playerId = snapshot._value.playerId
+                        console.log('paldinesh', snapshot._value.playerId)
+                    }
+                    
                     if(snapshotNew.exists()) {
 
                         this.setState({loading: false, commonContacts: getCommonContacts(this.state.contacts, this.state.contacts)})
@@ -390,11 +429,35 @@ class ContactScreen extends Component {
 
             firebase.database().ref(`users/${element.phonenumber.replace(/\s/g,'')}`).once('value', snapshot => {                
                 const contacts = snapshot                                
-
+                console.log('group user player id', snapshot)
                     
                 if (contacts._value != null) {
-                    let userUid = Object.keys (contacts._value)[0];
-                    var object = {'name' : element.name, 'phonenumber': element.phonenumber, 'count' : 0, 'userUid' : userUid,}
+                    var playerId = ''
+
+                    if (snapshot._value != null) {
+                        playerId = snapshot._value.playerId
+                    }
+
+                    var userUid = Object.keys (contacts._value)[0];
+
+                    console.log('UserDetails reciverUser 1111 ', userUid)
+
+
+                    if (contacts._value != undefined) {
+    
+                        if (userUid === 'playerId') {
+                            userUid = Object.keys(contacts._value)[1];
+                        } 
+    
+                        console.log('UserDetails reciverUser 2222 ', userUid)
+    
+                        if (userUid === 'playerId') {
+                            userUid = Object.keys(contacts._value)[2];
+                        }    
+                        console.log('UserDetails reciverUser 33333', userUid)                        
+                    }
+
+                    var object = {'name' : element.name, 'phonenumber': element.phonenumber, 'count' : 0, 'userUid' : userUid, 'playerId' : playerId }
                     if (global.phoneNumber.replace(/\s/g,'') != element.phonenumber.replace(/\s/g,'')) {
                         this.state.groupArray.push(object)
                     }                    
@@ -407,7 +470,8 @@ class ContactScreen extends Component {
     }
 
     groupMemeberSelected = (key) => {
-        // console.log("list key value", key)
+        console.log("list key value", key)
+        // console.log('selected group members', this.state.selectedValues)
 
         this.state.groupArray.map((item) => {
             if (item.userUid === key.userUid) {
@@ -502,6 +566,8 @@ class ContactScreen extends Component {
         } else {
             global.playerId = undefined
             global.newCreatedKey = item.groupKey
+            global.playerIds = item.groupDetails.groupMembersPlayerId
+            
             setTimeout(() => {
                 this.props.navigation.navigate('message', {selectedIndex: 1, groupDetailsNew: item})
             }, 1000);            
