@@ -22,7 +22,8 @@ import SegmentedControlTab from "react-native-segmented-control-tab";
 import OneSignal from 'react-native-onesignal';
 // import CarrierInfo from 'react-native-carrier-info';
 // import Geocoder from 'react-native-geocoder';
-
+import Utility from '../../../lib/Utility'
+import LocalStorage from '../../../lib/LocalStorage'
 
 import firebaseSvc from '../../../components/FirebaseSvc'
 
@@ -344,22 +345,32 @@ class ContactScreen extends Component {
 
                             var cur = 0;
                             var selfUid = user._user.uid
-                            console.log('selfUidLog', selfUid)
 
                             contacts.forEach(contact => {
 
                                 setTimeout(() => {
-                                    console.log('user phone number', global.phoneNumber, global.playerId)
                                     firebase.database().ref(`users/${global.phoneNumber}`).update({"playerId":global.playerId})    
                                 }, 2000);
                                 
                                 contact.phoneNumbers.forEach(item => {
-                                    firebase.database().ref(`users/${user._user.phoneNumber}/${selfUid}/${cur}`).set({
-                                        name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
-                                        phonenumber: item.number,
-                                        userId: Date.parse(new Date()) + cur
-                                    })
-                                    cur++
+                                    var mobileNumber = item.number
+
+                                    LocalStorage.getCountryCode((countryCode) => {
+                                        console.log('countryCode 323232', countryCode)
+
+                                        if (Utility.hasWhiteSpace(item.number)) {
+                                            
+                                        } else {                                            
+                                            mobileNumber = '+' + countryCode.countryCode + ' ' + mobileNumber
+                                        }
+
+                                        firebase.database().ref(`users/${user._user.phoneNumber}/${selfUid}/${cur}`).set({
+                                            name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
+                                            phonenumber: mobileNumber,
+                                            userId: Date.parse(new Date()) + cur
+                                        })
+                                        cur++
+                                    })                                                                        
                                 })
                             })
                         }

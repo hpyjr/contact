@@ -9,6 +9,8 @@ import Contacts from 'react-native-contacts';
 import Spinner from 'react-native-loading-spinner-overlay'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import firebaseSvc from '../../components/FirebaseSvc'
+import Utility from '../../lib/Utility'
+import LocalStorage from '../../lib/LocalStorage'
 
 class SigninScreen extends Component {
     constructor() {
@@ -43,6 +45,7 @@ class SigninScreen extends Component {
                 }
             })
         }
+
         firebase.messaging().hasPermission()
         .then(enabled => {
             if (enabled) {
@@ -68,7 +71,17 @@ class SigninScreen extends Component {
 
     onConfirm = () => {
         const { confirmResult } = this.state;
+        
         if ( !confirmResult) {
+
+            var countryCodeNew = this.phone.getCountryCode()
+            var countryCode = {
+                countryCode: countryCodeNew,
+            }
+
+            LocalStorage.setCountryCode(countryCode)
+            
+
             let phone = this.phone.getValue();
             if (phone === ''){
                 Toast.show('Please type your phone number.');
@@ -159,16 +172,26 @@ class SigninScreen extends Component {
 
                             firebase.database().ref(`users/${selfUid}`).remove()
                             var cur = 0;
-                            
-                            console.log('selfUidLog', selfUid)
+                                                        
                             contacts.forEach(contact => {
                                 contact.phoneNumbers.forEach(item => {
-                                    firebase.database().ref(`users/${selfUid}/${selfUid}/${cur}`).set({
-                                        name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
-                                        phonenumber: item.number,
-                                        userId: Date.parse(new Date()) + cur
-                                    })
-                                    cur++
+                                    var mobileNumber = item.number
+
+                                    LocalStorage.getCountryCode((countryCode) => {
+                                        console.log('countryCode new', countryCode)
+
+                                        if (Utility.hasWhiteSpace(item.number)) {
+                                            
+                                        } else {                                            
+                                            mobileNumber = '+' + countryCode.countryCode + ' ' + mobileNumber
+                                        }
+                                        firebase.database().ref(`users/${selfUid}/${selfUid}/${cur}`).set({
+                                            name: contact.displayName ? contact.displayName : contact.familyName + ' ' + contact.givenName,
+                                            phonenumber: item.number,
+                                            userId: Date.parse(new Date()) + cur
+                                        })
+                                        cur++
+                                    })                                    
                                 })
                             })
                         }
@@ -213,7 +236,7 @@ class SigninScreen extends Component {
         //     Toast.show(error.message)
         // })
     }
-
+    
     renderPhoneNumberInput() {
         return (
             <View style={{width: '100%', paddingHorizontal: 10, paddingVertical: 13, borderColor: 'lightgray', borderWidth: 1}}>
